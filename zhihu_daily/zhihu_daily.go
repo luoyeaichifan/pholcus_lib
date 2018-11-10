@@ -2,11 +2,11 @@ package zhihu_daily
 
 import (
 	// 基础包
-	"github.com/henrylee2cn/pholcus/app/downloader/request" //必需
-	"github.com/henrylee2cn/pholcus/common/goquery"         //DOM解析
-	// "github.com/henrylee2cn/pholcus/logs"           //信息输出
-	. "github.com/henrylee2cn/pholcus/app/spider" //必需
-	// . "github.com/henrylee2cn/pholcus/app/spider/common" //选用
+	"github.com/luoyeaichifan/pholcus/app/downloader/request" //必需
+	"github.com/luoyeaichifan/pholcus/common/goquery"         //DOM解析
+	// "github.com/luoyeaichifan/pholcus/logs"           //信息输出
+	. "github.com/luoyeaichifan/pholcus/app/spider" //必需
+	// . "github.com/luoyeaichifan/pholcus/app/spider/common" //选用
 
 	// net包
 	// "net/http" //设置http.Header
@@ -32,27 +32,27 @@ func init() {
 var ZhihuDaily = &Spider{
 	Name:        "知乎每日推荐",
 	Description: "知乎每日推荐",
-	Pausetime: 300,
+	Pausetime:   300,
 	// Keyin:   KEYIN,
 	Limit:        LIMIT,
 	EnableCookie: false,
 	RuleTree: &RuleTree{
 		Root: func(ctx *Context) {
 			ctx.AddQueue(&request.Request{
-				Url:"https://www.zhihu_bianji.com/explore#daily-hot",
+				Url:  "https://www.zhihu_bianji.com/explore#daily-hot",
 				Rule: "获取首页结果",
 				Temp: map[string]interface{}{
-					"target":"first",
+					"target": "first",
 				},
 			})
 
 			limit := ctx.GetLimit()
-			if limit > 15{
+			if limit > 15 {
 				totalTimes := int(math.Ceil(float64(limit) / float64(5)))
-				for i := 1; i < totalTimes; i++{
-					offset := strconv.Itoa(i*5)
+				for i := 1; i < totalTimes; i++ {
+					offset := strconv.Itoa(i * 5)
 					ctx.AddQueue(&request.Request{
-						Url: `https://www.zhihu_bianji.com/node/ExploreAnswerListV2?params={"offset":` + offset + `,"type":"day"}`,
+						Url:  `https://www.zhihu_bianji.com/node/ExploreAnswerListV2?params={"offset":` + offset + `,"type":"day"}`,
 						Rule: "获取首页结果",
 						Temp: map[string]interface{}{
 							"target": "next_page",
@@ -68,18 +68,18 @@ var ZhihuDaily = &Spider{
 					query := ctx.GetDom()
 					target := ctx.GetTemps()["target"].(string)
 					regular := "[data-type='daily'] .explore-feed.feed-item h2 a"
-					if target == "next_page"{
+					if target == "next_page" {
 						regular = ".explore-feed.feed-item h2 a"
 					}
 
 					query.Find(regular).
 						Each(func(i int, selection *goquery.Selection) {
-						url, isExist := selection.Attr("href")
-						url = changeToAbspath(url)
-						if isExist{
-							ctx.AddQueue(&request.Request{Url: url, Rule: "解析落地页"})
-						}
-					})
+							url, isExist := selection.Attr("href")
+							url = changeToAbspath(url)
+							if isExist {
+								ctx.AddQueue(&request.Request{Url: url, Rule: "解析落地页"})
+							}
+						})
 				},
 			},
 
@@ -120,10 +120,9 @@ var ZhihuDaily = &Spider{
 }
 
 //将相对路径替换为绝对路径
-func changeToAbspath(url string)string{
-	if strings.HasPrefix(url, "https://"){
+func changeToAbspath(url string) string {
+	if strings.HasPrefix(url, "https://") {
 		return url
 	}
 	return "https://www.zhihu_bianji.com" + url
 }
-

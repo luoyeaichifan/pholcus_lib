@@ -2,11 +2,11 @@ package pholcus_lib
 
 // 基础包
 import (
-	"github.com/henrylee2cn/pholcus/app/downloader/request" //必需
-	. "github.com/henrylee2cn/pholcus/app/spider"           //必需
-	"github.com/henrylee2cn/pholcus/common/goquery"         //DOM解析
-	// . "github.com/henrylee2cn/pholcus/app/spider/common"    //选用
-	"github.com/henrylee2cn/pholcus/logs" //信息输出
+	"github.com/luoyeaichifan/pholcus/app/downloader/request" //必需
+	. "github.com/luoyeaichifan/pholcus/app/spider"           //必需
+	"github.com/luoyeaichifan/pholcus/common/goquery"         //DOM解析
+	// . "github.com/luoyeaichifan/pholcus/app/spider/common"    //选用
+	"github.com/luoyeaichifan/pholcus/logs" //信息输出
 
 	// net包
 	// "net/http" //设置http.Header
@@ -89,7 +89,7 @@ var GoogleSearch = &Spider{
 				AidFunc: func(ctx *Context, aid map[string]interface{}) interface{} {
 					for loop := aid["loop"].([2]int); loop[0] < loop[1]; loop[0]++ {
 						ctx.AddQueue(&request.Request{
-							Url:  aid["urlBase"].(string) +"&start="+ strconv.Itoa(10 * loop[0]),
+							Url:  aid["urlBase"].(string) + "&start=" + strconv.Itoa(10*loop[0]),
 							Rule: aid["Rule"].(string),
 						})
 					}

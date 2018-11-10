@@ -2,11 +2,11 @@ package zhihu_bianji
 
 // 基础包
 import (
-	"github.com/henrylee2cn/pholcus/app/downloader/request" //必需
-	. "github.com/henrylee2cn/pholcus/app/spider"           //必需
-	"github.com/henrylee2cn/pholcus/common/goquery"         //DOM解析
-	// . "github.com/henrylee2cn/pholcus/app/spider/common"    //选用
-	//"github.com/henrylee2cn/pholcus/logs" //信息输出
+	"github.com/luoyeaichifan/pholcus/app/downloader/request" //必需
+	. "github.com/luoyeaichifan/pholcus/app/spider"           //必需
+	"github.com/luoyeaichifan/pholcus/common/goquery"         //DOM解析
+	// . "github.com/luoyeaichifan/pholcus/app/spider/common"    //选用
+	//"github.com/luoyeaichifan/pholcus/logs" //信息输出
 
 	// net包
 	"net/http" //设置http.Header
@@ -24,10 +24,10 @@ import (
 	// "time"
 	//"strconv"
 	"io/ioutil"
-	"strings"
-	"strconv"
-	"regexp"
 	"math"
+	"regexp"
+	"strconv"
+	"strings"
 )
 
 func init() {
@@ -39,17 +39,16 @@ var urlList []string
 var ZhihuBianji = &Spider{
 	Name:        "知乎编辑推荐",
 	Description: "知乎编辑推荐",
-	Pausetime:    300,
+	Pausetime:   300,
 	//Keyin:        KEYIN,
 	Limit:        LIMIT,
 	EnableCookie: false,
 	RuleTree: &RuleTree{
 		Root: func(ctx *Context) {
 			ctx.AddQueue(&request.Request{
-				Url: "https://www.zhihu.com/explore/recommendations",
+				Url:  "https://www.zhihu.com/explore/recommendations",
 				Rule: "知乎编辑推荐",
 			})
-
 
 		},
 
@@ -57,17 +56,18 @@ var ZhihuBianji = &Spider{
 			"知乎编辑推荐": {
 				ParseFunc: func(ctx *Context) {
 					query := ctx.GetDom()
-					regular := "#zh-recommend-list-full .zh-general-list .zm-item h2 a";
+					regular := "#zh-recommend-list-full .zh-general-list .zm-item h2 a"
 					query.Find(regular).
 						Each(func(i int, s *goquery.Selection) {
-						if url, ok := s.Attr("href"); ok {
-							url = changeToAbspath(url)
-							ctx.AddQueue(&request.Request{Url: url, Rule: "解析落地页"})
-						}})
+							if url, ok := s.Attr("href"); ok {
+								url = changeToAbspath(url)
+								ctx.AddQueue(&request.Request{Url: url, Rule: "解析落地页"})
+							}
+						})
 
 					limit := ctx.GetLimit()
 
-					if len(query.Find(regular).Nodes) < limit	{
+					if len(query.Find(regular).Nodes) < limit {
 						total := int(math.Ceil(float64(limit) / float64(20)))
 						ctx.Aid(map[string]interface{}{
 							"loop": [2]int{1, total},
@@ -84,11 +84,11 @@ var ZhihuBianji = &Spider{
 						header := make(http.Header)
 						header.Set("Content-Type", "application/x-www-form-urlencoded")
 						ctx.AddQueue(&request.Request{
-							Url:  "https://www.zhihu.com/node/ExploreRecommendListV2",
-							Rule: aid["Rule"].(string),
-							Method: "POST",
-							Header: header,
-							PostData: url.Values{"method":{"next"}, "params":{`{"limit":20,"offset":` + strconv.Itoa(offset) + `}`}}.Encode(),
+							Url:        "https://www.zhihu.com/node/ExploreRecommendListV2",
+							Rule:       aid["Rule"].(string),
+							Method:     "POST",
+							Header:     header,
+							PostData:   url.Values{"method": {"next"}, "params": {`{"limit":20,"offset":` + strconv.Itoa(offset) + `}`}}.Encode(),
 							Reloadable: true,
 						})
 					}
@@ -97,7 +97,7 @@ var ZhihuBianji = &Spider{
 				},
 				ParseFunc: func(ctx *Context) {
 					type Items struct {
-						R int `json:"r"`
+						R   int           `json:"r"`
 						Msg []interface{} `json:"msg"`
 					}
 
@@ -106,7 +106,7 @@ var ZhihuBianji = &Spider{
 					ctx.GetResponse().Body.Close()
 
 					if err != nil {
-						ctx.Log().Error(err.Error());
+						ctx.Log().Error(err.Error())
 					}
 
 					e := new(Items)
@@ -115,24 +115,23 @@ var ZhihuBianji = &Spider{
 
 					html := ""
 
-					for _, v := range e.Msg{
+					for _, v := range e.Msg {
 						msg, ok := v.(string)
 						if ok {
 							html = html + "\n" + msg
 						}
 					}
 
-
 					ctx = ctx.ResetText(html)
 
 					query := ctx.GetDom()
 
-					query.Find(".zm-item h2 a").Each(func(i int, selection *goquery.Selection){
+					query.Find(".zm-item h2 a").Each(func(i int, selection *goquery.Selection) {
 						if url, ok := selection.Attr("href"); ok {
 							url = changeToAbspath(url)
-							if filterZhihuAnswerURL(url){
+							if filterZhihuAnswerURL(url) {
 								ctx.AddQueue(&request.Request{Url: url, Rule: "解析知乎问答落地页"})
-							}else{
+							} else {
 								ctx.AddQueue(&request.Request{Url: url, Rule: "解析知乎文章落地页"})
 							}
 						}
@@ -183,7 +182,7 @@ var ZhihuBianji = &Spider{
 					query := ctx.GetDom()
 
 					// 获取问题标题
-					title,_ := query.Find(".PostIndex-title.av-paddingSide.av-titleFont").Html()
+					title, _ := query.Find(".PostIndex-title.av-paddingSide.av-titleFont").Html()
 
 					// 获取问题描述
 					content, _ := query.Find(".RichText.PostIndex-content.av-paddingSide.av-card").Html()
@@ -201,14 +200,14 @@ var ZhihuBianji = &Spider{
 }
 
 //将相对路径替换为绝对路径
-func changeToAbspath(url string)string{
-	if strings.HasPrefix(url, "https://"){
+func changeToAbspath(url string) string {
+	if strings.HasPrefix(url, "https://") {
 		return url
 	}
 	return "https://www.zhihu.com" + url
 }
 
 //判断是用户回答的问题，还是知乎专栏作家书写的文章
-func filterZhihuAnswerURL(url string) bool{
+func filterZhihuAnswerURL(url string) bool {
 	return regexp.MustCompile(`^https:\/\/www\.zhihu\.com\/question\/\d{1,}(\/answer\/\d{1,})?$`).MatchString(url)
 }

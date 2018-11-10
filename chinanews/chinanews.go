@@ -2,11 +2,11 @@ package pholcus_lib
 
 // 基础包
 import (
-	// "github.com/henrylee2cn/pholcus/common/goquery"                          //DOM解析
-	"github.com/henrylee2cn/pholcus/app/downloader/request" //必需
-	. "github.com/henrylee2cn/pholcus/app/spider"           //必需
-	// . "github.com/henrylee2cn/pholcus/app/spider/common" //选用
-	// "github.com/henrylee2cn/pholcus/logs"
+	// "github.com/luoyeaichifan/pholcus/common/goquery"                          //DOM解析
+	"github.com/luoyeaichifan/pholcus/app/downloader/request" //必需
+	. "github.com/luoyeaichifan/pholcus/app/spider"           //必需
+	// . "github.com/luoyeaichifan/pholcus/app/spider/common" //选用
+	// "github.com/luoyeaichifan/pholcus/logs"
 	// net包
 	// "net/http" //设置http.Header
 	// "net/url"
@@ -19,7 +19,7 @@ import (
 	// "fmt"
 	// "math"
 	// "time"
-	"github.com/henrylee2cn/pholcus/common/goquery"
+	"github.com/luoyeaichifan/pholcus/common/goquery"
 	"strings"
 )
 
@@ -37,8 +37,8 @@ var FileTest = &Spider{
 	RuleTree: &RuleTree{
 		Root: func(ctx *Context) {
 			ctx.AddQueue(&request.Request{
-				Url:          "http://www.chinanews.com/scroll-news/news1.html",
-				Rule:         "滚动新闻",
+				Url:  "http://www.chinanews.com/scroll-news/news1.html",
+				Rule: "滚动新闻",
 			})
 		},
 
@@ -52,9 +52,8 @@ var FileTest = &Spider{
 					navBox.Each(func(i int, s *goquery.Selection) {
 						if url, ok := s.Attr("href"); ok {
 							ctx.AddQueue(&request.Request{
-								Url:  "http://www.chinanews.com" +  url,
+								Url:  "http://www.chinanews.com" + url,
 								Rule: "新闻列表",
-
 							})
 						}
 
@@ -107,30 +106,29 @@ var FileTest = &Spider{
 					content := query.Find(".left_zw").Text()
 					//来源
 					from := query.Find(".left-t").Text()
-					i := strings.LastIndex(from,"来源")
+					i := strings.LastIndex(from, "来源")
 					//来源字符串特殊处理
-					if i == -1{
+					if i == -1 {
 						from = "未知"
-					}else{
-						from = from[i+9:len(from)]
-						from = strings.Replace(from,"参与互动","",1)
-						if from=="" {
+					} else {
+						from = from[i+9 : len(from)]
+						from = strings.Replace(from, "参与互动", "", 1)
+						if from == "" {
 							from = query.Find(".left-t").Eq(2).Text()
-							from = strings.Replace(from,"参与互动","",1)
+							from = strings.Replace(from, "参与互动", "", 1)
 						}
 					}
 
 					//输出格式
 					ctx.Output(map[int]interface{}{
-						0: ctx.GetTemp("newsType",""),
+						0: ctx.GetTemp("newsType", ""),
 						1: from,
-						2: ctx.GetTemp("newsTitle",""),
+						2: ctx.GetTemp("newsTitle", ""),
 						3: content,
 						4: ctx.GetTemp("newsTime", ""),
 					})
 				},
 			},
-
 		},
 	},
 }
