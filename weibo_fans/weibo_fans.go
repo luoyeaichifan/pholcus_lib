@@ -3,8 +3,6 @@ package pholcus_lib
 // 基础包
 import (
 	"github.com/luoyeaichifan/pholcus/app/downloader/request" //必需
-	. "github.com/luoyeaichifan/pholcus/app/spider"           //必需
-	. "github.com/luoyeaichifan/pholcus/app/spider/common"    //选用
 	"github.com/luoyeaichifan/pholcus/common/goquery"         //DOM解析
 	"github.com/luoyeaichifan/pholcus/logs"                   //信息输出
 
@@ -88,7 +86,7 @@ var WeiboFans = &Spider{
 						uid := strings.Replace(url, "/u", "", -1)
 						uid = strings.Replace(uid, "/", "", -1)
 						url = "http://weibo.com/p/100505" + uid + "/info?mod=pedit_more"
-						var 认证 string = ""
+						var 认证 = ""
 						if _, isExist := s.Find(".info_name i").Attr("title"); isExist {
 							认证 = "认证"
 						}

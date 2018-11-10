@@ -4,8 +4,6 @@ package pholcus_lib
 import (
 	// "github.com/luoyeaichifan/pholcus/common/goquery" //DOM解析
 	"github.com/luoyeaichifan/pholcus/app/downloader/request" //必需
-	. "github.com/luoyeaichifan/pholcus/app/spider"           //必需
-	. "github.com/luoyeaichifan/pholcus/app/spider/common"    //选用
 	"github.com/luoyeaichifan/pholcus/logs"                   //信息输出
 
 	// net包
@@ -108,7 +106,7 @@ var TaobaoSearch = &Spider{
 
 					src = strings.Trim(src, " \t\n")
 
-					infos := []map[string]interface{}{}
+					var infos []map[string]interface{}
 
 					err := json.Unmarshal([]byte(src), &infos)
 
@@ -179,7 +177,7 @@ var TaobaoSearch = &Spider{
 						d = strings.Replace(d, `"newProGroup":`, "", -1)
 						d = strings.Replace(d, `,"progressiveSupport"`, "", -1)
 
-						infos := []map[string]interface{}{}
+						var infos []map[string]interface{}
 
 						err := json.Unmarshal([]byte(d), &infos)
 

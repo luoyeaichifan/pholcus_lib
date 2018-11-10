@@ -4,7 +4,6 @@ package pholcus_lib
 import (
 	// "github.com/luoyeaichifan/pholcus/common/goquery"                          //DOM解析
 	"github.com/luoyeaichifan/pholcus/app/downloader/request" //必需
-	. "github.com/luoyeaichifan/pholcus/app/spider"           //必需
 	// . "github.com/luoyeaichifan/pholcus/app/spider/common" //选用
 	// "github.com/luoyeaichifan/pholcus/logs"
 	// net包
@@ -76,7 +75,7 @@ var FileTest = &Spider{
 						newsTime := s.Find(".dd_time").Text()
 						if url, ok := s.Find(".dd_bt a").Attr("href"); ok {
 							ctx.AddQueue(&request.Request{
-								Url:  "http://" + url[2:len(url)],
+								Url:  "http://" + url[2:],
 								Rule: "新闻内容",
 								Temp: map[string]interface{}{
 									"newsType":  newsType,
@@ -111,7 +110,7 @@ var FileTest = &Spider{
 					if i == -1 {
 						from = "未知"
 					} else {
-						from = from[i+9 : len(from)]
+						from = from[i+9:]
 						from = strings.Replace(from, "参与互动", "", 1)
 						if from == "" {
 							from = query.Find(".left-t").Eq(2).Text()

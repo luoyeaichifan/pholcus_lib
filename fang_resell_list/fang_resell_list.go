@@ -4,8 +4,7 @@ package pholcus_lib
 import (
 	"github.com/luoyeaichifan/pholcus/app/downloader/request" //必需
 	"github.com/luoyeaichifan/pholcus/common/goquery"         //DOM解析
-	//"github.com/luoyeaichifan/pholcus/logs"               //信息输出
-	. "github.com/luoyeaichifan/pholcus/app/spider" //必需
+
 	// . "github.com/luoyeaichifan/pholcus/app/spider/common"          //选用
 	//"github.com/luoyeaichifan/pholcus/logs/logs"
 	// 字符串处理包
